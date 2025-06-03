@@ -1,4 +1,4 @@
-# ERDDAP on Docker
+# ERDDAP on Docker - This Fork is to add HADOOP for parquet support
 
 A feature full Tomcat (SSL over APR, etc.) running [ERDDAP](http://coastwatch.pfeg.noaa.gov/erddap/index.html)
 
