@@ -69,6 +69,30 @@ COPY files/setenv.sh ${CATALINA_HOME}/bin/setenv.sh
 COPY update-server-xml.sh /opt/update-server-xml.sh
 RUN /opt/update-server-xml.sh
 
+
+# -----------------------------
+# Install Hadoop (example: 3.3.6)
+# -----------------------------
+    ENV HADOOP_VERSION=3.3.6
+    ENV HADOOP_HOME=/opt/hadoop
+    ENV PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
+    
+    RUN wget https://downloads.apache.org/hadoop/common/hadoop-$HADOOP_VERSION/hadoop-$HADOOP_VERSION.tar.gz && \
+        tar -xzf hadoop-$HADOOP_VERSION.tar.gz && \
+        mv hadoop-$HADOOP_VERSION $HADOOP_HOME && \
+        rm hadoop-$HADOOP_VERSION.tar.gz
+    
+    # -----------------------------
+    # Setup Hadoop classpath for Tomcat/ERDDAP
+    # -----------------------------
+    # Option 1: copy Hadoop jars to Tomcat lib
+    RUN cp $HADOOP_HOME/share/hadoop/common/*.jar $CATALINA_HOME/lib/ && \
+        cp $HADOOP_HOME/share/hadoop/hdfs/*.jar $CATALINA_HOME/lib/ && \
+        cp $HADOOP_HOME/share/hadoop/mapreduce/*.jar $CATALINA_HOME/lib/ && \
+        cp $HADOOP_HOME/share/hadoop/yarn/*.jar $CATALINA_HOME/lib/
+
+        
+
 # Default configuration
 # Note: Make sure ERDDAP_flagKeyKey is set either in a runtime environment variable or in setup.xml
 #       If a value is not set, a random value for ERDDAP_flagKeyKey will be generated at runtime.
